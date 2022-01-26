@@ -32,6 +32,13 @@ public class Servlet2 extends HttpServlet {
 	    response.setContentType("application/json");
 	    response.setCharacterEncoding("UTF-8");
 	    response.getWriter().write(json);
+	    
+	    
+	    String id=request.getParameter("id");
+	    String name=request.getParameter("name");
+	    
+	    System.out.println("id="+id+", mame="+name);
+	    
 		System.out.println("Jsonº¸³¿");
 	}
 
