@@ -26,46 +26,45 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class EsDAO {
-	
-    public static Map<String,Long> getEsStat() throws IOException {
-        String indexName="jshj";
-        Map<String,Long> m=new HashMap<String,Long>();
-        
-        /*
-        String hostname = "192.168.0.171";
-        int port = 9201;
 
-        final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-        credentialsProvider.setCredentials(AuthScope.ANY,new UsernamePasswordCredentials("elastic", "elevisor"));
-        RestHighLevelClient client = new RestHighLevelClient(RestClient.builder(new HttpHost(hostname,port)).
-                setHttpClientConfigCallback(new RestClientBuilder.HttpClientConfigCallback() {
-                    public HttpAsyncClientBuilder customizeHttpClient(
-                            HttpAsyncClientBuilder httpClientBuilder) {
-                        return httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
-                    }
-                }));
-       */
-        
-        RestHighLevelClient client=ElasticSearchClient.getHttpClient();
+	public static Map<String, Long> getEsStat() throws IOException {
+		String indexName = "jshj";
+		Map<String, Long> m = new HashMap<String, Long>();
 
-        RequestOptions opts = RequestOptions.DEFAULT;
+		/*
+		 * String hostname = "192.168.0.171"; int port = 9201;
+		 * 
+		 * final CredentialsProvider credentialsProvider = new
+		 * BasicCredentialsProvider();
+		 * credentialsProvider.setCredentials(AuthScope.ANY,new
+		 * UsernamePasswordCredentials("elastic", "elevisor")); RestHighLevelClient
+		 * client = new RestHighLevelClient(RestClient.builder(new
+		 * HttpHost(hostname,port)). setHttpClientConfigCallback(new
+		 * RestClientBuilder.HttpClientConfigCallback() { public HttpAsyncClientBuilder
+		 * customizeHttpClient( HttpAsyncClientBuilder httpClientBuilder) { return
+		 * httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider); } }));
+		 */
 
-        SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
-        sourceBuilder.size(0).sort("_doc", SortOrder.ASC);
+		RestHighLevelClient client = ElasticSearchClient.getHttpClient();
 
-        TermsAggregationBuilder termsaggbuilder = AggregationBuilders.terms("test").field("city").size(12);
-        sourceBuilder.aggregation(termsaggbuilder);
+		RequestOptions opts = RequestOptions.DEFAULT;
 
-        SearchRequest searchRequest = new SearchRequest("bank-data-2021");
-        searchRequest.searchType(SearchType.DFS_QUERY_THEN_FETCH).source(sourceBuilder);
+		SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+		sourceBuilder.size(0).sort("_doc", SortOrder.ASC);
 
-        SearchResponse searchresponse = client.search(searchRequest,opts);
-        Aggregations aggs=searchresponse.getAggregations();
-        Terms parseterm = aggs.get("test");        
-        
-        for(Terms.Bucket bucket : parseterm.getBuckets()){    
-        	m.put((String)bucket.getKey(),bucket.getDocCount() );
-        }
-        return m;
-    }
+		TermsAggregationBuilder termsaggbuilder = AggregationBuilders.terms("test").field("city").size(12);
+		sourceBuilder.aggregation(termsaggbuilder);
+
+		SearchRequest searchRequest = new SearchRequest("bank-data-2021");
+		searchRequest.searchType(SearchType.DFS_QUERY_THEN_FETCH).source(sourceBuilder);
+
+		SearchResponse searchresponse = client.search(searchRequest, opts);
+		Aggregations aggs = searchresponse.getAggregations();
+		Terms parseterm = aggs.get("test");
+
+		for (Terms.Bucket bucket : parseterm.getBuckets()) {
+			m.put((String) bucket.getKey(), bucket.getDocCount());
+		}
+		return m;
+	}
 }
